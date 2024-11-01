@@ -53,7 +53,7 @@ build/
 dist/
 
 # Archivos de configuración específicos de frameworks
-config/
+# config/
 app/config/
 
 # Archivos específicos de WordPress

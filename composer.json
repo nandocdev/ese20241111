@@ -10,5 +10,25 @@
         }
     ],
     "minimum-stability": "stable",
-    "require": {}
+    "require": {},
+	 "require-dev": {
+	 },
+	 "autoload": {
+		  "psr-4": {
+				"ESE\\App\\": "app/",
+				"ESE\\Core\\": "core/",
+				"ESE\\Src\\": "src/"
+		  },
+		  "files": [
+			  "config/helpers.php"
+		  ]
+	 },
+	 "autoload-dev": {
+		  "psr-4": {
+				"ESE\\Tests\\": "tests/"
+		  }
+	 },
+	 "scripts": {
+		  "test": "phpunit"
+	 }
 }
