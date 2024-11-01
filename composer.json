@@ -1,0 +1,14 @@
+{
+    "name": "nandocdev/esecorp",
+    "description": "Sistema de administracion de operaciones",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Fernando Castillo Valdés",
+            "email": "ferncastillov@outlook.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}

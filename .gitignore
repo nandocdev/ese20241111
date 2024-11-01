@@ -1,0 +1,61 @@
+# Directorio de caché
+/cache/
+
+# Directorio de sesión
+/sessions/
+
+# Directorio de archivos temporales
+/tmp/
+
+# Archivos de configuración 
+*.ini
+*.env
+*.env.*
+
+# Archivos de base de datos
+*.sql
+*.sqlite
+*.db
+
+# Archivos de logs
+*.log
+
+# Archivos de prueba
+tests/
+
+# Archivos de desarrollo
+*.bak
+*.swp
+*.tmp
+
+# Archivos de IDE
+.idea/
+.vscode/
+
+# Archivos específicos de PHPStorm
+.idea/workspace.xml
+.idea/dataSources.local.xml
+
+# Archivos generados por Composer
+vendor/
+
+# Archivos de configuración específicos de Composer
+composer.lock
+
+# Archivos de documentación
+docs/
+
+# Archivos de traducción
+locales/
+
+# Archivos de compilación
+build/
+dist/
+
+# Archivos de configuración específicos de frameworks
+config/
+app/config/
+
+# Archivos específicos de WordPress
+wp-config.php
+wp-content/uploads/
