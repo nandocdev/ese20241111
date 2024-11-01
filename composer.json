@@ -20,7 +20,7 @@
 				"ESE\\Src\\": "src/"
 		  },
 		  "files": [
-			  "config/helpers.php"
+			  "./config/helpers.php"
 		  ]
 	 },
 	 "autoload-dev": {

@@ -10,4 +10,11 @@
  */
 declare(strict_types=1);
 
-return [];
+// definicion de helpers
+return [
+   "app_name" => "srv/esecorp",
+   // obtiene variables de entorno
+   "env" => function ($key, $default = null) {
+      return $_ENV[$key] ?? $default;
+   },
+];
