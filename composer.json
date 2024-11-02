@@ -27,7 +27,9 @@
 				"ESE\\Src\\": "src/"
 		  },
 		  "files": [
-			  "./config/helpers.php"
+			  "./config/helpers.php",
+              "./config/app.config.php",
+              "./config/db.config.php"
 		  ]
 	 },
 	 "autoload-dev": {
