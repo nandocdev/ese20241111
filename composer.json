@@ -38,6 +38,7 @@
 		  }
 	 },
 	 "scripts": {
-		  "test": "phpunit"
+		  "test": "phpunit",
+          "serve": "php -S localhost:8000 -t public/"
 	 }
 }

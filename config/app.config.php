@@ -21,13 +21,14 @@ return [
       'charset' => 'UTF-8',
       'env' => 'development',
       'debug' => true,
+      'methods_allowed' => ['GET', 'POST', 'PUT', 'DELETE'],
    ],
    'path' => [
       'root' => dirname(__DIR__),
       'app' => dirname(__DIR__) . '/app',
       'config' => dirname(__DIR__) . '/config',
       'public' => dirname(__DIR__) . '/public',
-      'storage' => dirname(__DIR__) . '/storage',
+      'tmp' => dirname(__DIR__) . '/tmp',
       'vendor' => dirname(__DIR__) . '/vendor',
    ],
    'mail' => [
