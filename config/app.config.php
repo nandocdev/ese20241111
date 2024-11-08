@@ -22,6 +22,7 @@ return [
       'env' => 'development',
       'debug' => true,
       'methods_allowed' => ['GET', 'POST', 'PUT', 'DELETE'],
+      'url' => 'http://localhost:8080',
    ],
    'path' => [
       'root' => dirname(__DIR__),

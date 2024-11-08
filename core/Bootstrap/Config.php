@@ -24,6 +24,7 @@ class Config {
 
    public static function get(string $key, string $subkey): mixed {
       $app = self::load('app');
+      $app['app']['url'] = self::getUrl();
       $db = self::load('db');
       $config = array_merge($app, $db);
       if (array_key_exists($key, $config)) {
@@ -33,6 +34,28 @@ class Config {
          return $config[$key];
       }
       return null;
+   }
+
+   private static function getUrl(): string {
+      $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+      $host = $_SERVER['HTTP_HOST'];
+      $uri = $protocol . '://' . $host;
+      if (!empty($_GET['url'])) {
+         $query_string = '';
+         if (count($_GET) > 1) {
+            $query_string = '?';
+            foreach ($_GET as $key => $value) {
+               if ($key != 'url') {
+                  $query_string .= $key . '=' . $value . '&';
+               }
+            }
+            $query_string = rtrim($query_string, '&');
+         }
+         $uri .= str_replace($_GET['url'] . $query_string, '', urldecode($_SERVER['REQUEST_URI']));
+      } else {
+         $uri = $_SERVER['REQUEST_URI'];
+      }
+      return $uri;
    }
 
 }
