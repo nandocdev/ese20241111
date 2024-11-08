@@ -37,7 +37,14 @@ try {
    // $router = $container->get(\App\Router::class);
    // $router->dispatch();
 
-   echo "Aplicación iniciada correctamente.";
+   $router = $container->get('router');
+
+   $router->get('/', function ($request, $response) {
+      $response->json(['message' => 'Hello, World! ' . __METHOD__]);
+   });
+
+   $router->dispatch();
+
 
 } catch (\Exception $e) {
    // Manejo de excepciones globales

@@ -33,7 +33,7 @@ class ControllerInvoker {
             call_user_func_array([$currentController, $method], [$request, $response]);
          }
       } catch (\Exception $e) {
-         $response->setStatus(500)->json(['error' => $e->getMessage()]);
+         $response->setStatus(500)->json(['error_invoker' => $e->getMessage()]);
       }
    }
 }

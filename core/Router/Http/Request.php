@@ -44,12 +44,12 @@ class Request {
       $this->method = $this->determineMethod();
       $this->body = $this->getRequestBody();
       $this->headers = $this->getHeaders();
+      $this->scheme = $this->determineScheme();
       $this->url = $this->determineUrl();
       $this->base = $this->determineBaseUrl();
       $this->referer = $this->getServerVar('HTTP_REFERER', '');
       $this->ip = $this->determineIp();
       $this->ajax = $this->isAjaxRequest();
-      $this->scheme = $this->determineScheme();
       $this->userAgent = $this->getServerVar('HTTP_USER_AGENT', '');
       $this->contentType = $this->getServerVar('CONTENT_TYPE', '');
       $this->contentLength = (int) $this->getServerVar('CONTENT_LENGTH', 0);
@@ -90,10 +90,12 @@ class Request {
    }
 
    private function determineMethod(): string {
-      return strtoupper(
-         $this->getServerVar('HTTP_X_HTTP_METHOD_OVERRIDE')
-         ?? $this->getServerVar('REQUEST_METHOD', 'GET')
-      );
+      $override = $this->getServerVar('HTTP_X_HTTP_METHOD_OVERRIDE');
+      if ($override) {
+         return strtoupper($override);
+      }
+      $req_method = $this->getServerVar('REQUEST_METHOD', 'GET');
+      return strtoupper($req_method);
    }
 
    private function determineScheme(): string {
@@ -104,7 +106,11 @@ class Request {
    }
 
    private function determineUrl(): string {
-      return str_replace('@', '%40', $this->getServerVar('REQUEST_URI', '/'));
+      // return str_replace('@', '%40', $this->getServerVar('REQUEST_URI', '/'));
+      $url = $this->getServerVar('REQUEST_URI', '/');
+      $url = str_replace('@', '%40', $url);
+      return $url;
+
    }
 
    private function determineBaseUrl(): string {

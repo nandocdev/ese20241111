@@ -57,7 +57,7 @@ class EseHandlerException {
 
    public static function exceptionHandler($e): void {
       $logger = new Logger('Bundle');
-      $logger->pushHandler(new StreamHandler(Config::get('path', 'tmp') . 'logs/' . date('ymd') . "_arch.log", Logger::DEBUG));
+      $logger->pushHandler(new StreamHandler(Config::get('path', 'tmp') . '//logs/' . date('ymd') . "_arch.log", Logger::DEBUG));
       $logger->pushProcessor(new UidProcessor());
 
 
