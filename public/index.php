@@ -61,13 +61,16 @@ try {
    });
 
    $router->get('/user/{name}/{surename}/{age}?', function (Request $request, Response $response) {
-      $response->json(['message' => 'Welcome to the user page', 'params' => $request->body]);
+      $response->json([
+         'message' => 'Welcome to the user page',
+         'name' => $request->body['name'],
+         'surename' => $request->body['surename'],
+         'age' => $request->body['age']
+      ]);
    });
-
 
    // Implementación de la lógica para el router
    $router->dispatch();
-
 
 } catch (\Exception $e) {
    // Manejo de excepciones globales
