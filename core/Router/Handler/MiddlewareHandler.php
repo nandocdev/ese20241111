@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace ESE\Core\Router\Handler;
 
-use ESE\Core\Router\Http\Request;
 use ESE\Core\Router\Http\Response;
+use ESE\Core\Router\Http\Request;
 use Psr\Container\ContainerInterface;
 use ESE\Core\Router\Interfaces\MiddlewareInterface;
 

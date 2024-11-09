@@ -11,6 +11,8 @@
 declare(strict_types=1);
 
 namespace ESE\Core\Router\Interfaces;
+use ESE\Core\Router\Http\Request;
+use ESE\Core\Router\Http\Response;
 
 interface MiddlewareInterface {
    public function handle(Request $request, Response $response, callable $next): void;
