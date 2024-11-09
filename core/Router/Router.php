@@ -18,6 +18,7 @@ use ESE\Core\Router\Handler\ControllerInvoker;
 use ESE\Core\Router\Handler\MiddlewareHandler;
 use ESE\Core\Router\Http\Request;
 use ESE\Core\Router\Http\Response;
+use Psr\Container\ContainerInterface;
 
 class Router {
    private RouteCollection $routeCollection;
@@ -25,15 +26,23 @@ class Router {
    private ControllerInvoker $controllerInvoker;
    private MiddlewareHandler $middlewareHandler;
    private array $globalMiddlewares = [];
+   private ContainerInterface $container;
 
-   public function __construct() {
-      $this->routeCollection = new RouteCollection();
-      $this->routeMatcher = new RouteMatcher();
-      $this->controllerInvoker = new ControllerInvoker();
-      $this->middlewareHandler = new MiddlewareHandler();
+   public function __construct(
+      RouteCollection $routeCollection,
+      RouteMatcher $routeMatcher,
+      ControllerInvoker $controllerInvoker,
+      MiddlewareHandler $middlewareHandler,
+      ContainerInterface $container
+   ) {
+      $this->routeCollection = $routeCollection;
+      $this->routeMatcher = $routeMatcher;
+      $this->controllerInvoker = $controllerInvoker;
+      $this->middlewareHandler = $middlewareHandler;
+      $this->container = $container;
    }
 
-   public function addGlobalMiddleware(callable $middleware): void {
+   public function addGlobalMiddleware(callable|string $middleware): void {
       $this->globalMiddlewares[] = $middleware;
    }
 
@@ -53,6 +62,11 @@ class Router {
       $this->routeCollection->addRouter('DELETE', $path, $callback, array_merge($this->globalMiddlewares, $middlewares));
    }
 
+   public function redirect(string $from, string $to, int $statusCode = 301): void {
+      header("Location: {$to}", true, $statusCode);
+      exit();
+   }
+
    public function group(callable $callback, array $middlewares = []): void {
       $this->routeCollection->group($callback, array_merge($this->globalMiddlewares, $middlewares));
    }
@@ -61,16 +75,30 @@ class Router {
       $request = new Request();
       $response = new Response();
 
+      try {
+         // Match route
+         $route = $this->routeMatcher->match($request->method, $request->url, $this->routeCollection);
 
-      $route = $this->routeMatcher->match($request->method, $request->url, $this->routeCollection);
+         if ($route === null) {
+            $this->handleRouteNotFound($response);
+            return;
+         }
 
-      if ($route === null) {
-
-         $response->setStatus(404)->json(['error_route' => 'Route not found']);
-         return;
+         // Handle middlewares
+         $this->middlewareHandler->handle($route['middlewares'], $request, $response);
+         $request->addBody($route['params']);
+         // Invoke controller
+         $this->controllerInvoker->invoke($route['callback'], $request, $response);
+      } catch (\Exception $e) {
+         $this->handleServerError($response, $e);
       }
+   }
 
-      $this->middlewareHandler->handle($route['middlewares'], $request, $response);
-      $this->controllerInvoker->invoke($route['callback'], $request, $response);
+   private function handleRouteNotFound(Response $response): void {
+      $response->setStatus(404)->json(['error' => 'Route not found']);
+   }
+
+   private function handleServerError(Response $response, \Exception $e): void {
+      $response->setStatus(500)->json(['error' => $e->getMessage()]);
    }
 }

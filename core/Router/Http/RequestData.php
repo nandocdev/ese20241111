@@ -57,7 +57,7 @@ class RequestData {
 
       // Limpieza básica de scripts y etiquetas
       $output = htmlspecialchars(strip_tags($input), ENT_QUOTES, 'UTF-8');
-      return filter_var($output, FILTER_SANITIZE_STRING);
+      return $output;
    }
 
    /**

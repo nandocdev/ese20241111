@@ -10,6 +10,14 @@
  */
 declare(strict_types=1);
 
+use ESE\Core\Router\Collection\RouteCollection;
+use ESE\Core\Router\Matchers\RouteMatcher;
+use ESE\Core\Router\Router;
+use ESE\Core\Router\Handler\ControllerInvoker;
+use ESE\Core\Router\Handler\MiddlewareHandler;
+use ESE\Core\Router\Http\Request;
+use ESE\Core\Router\Http\Response;
+
 // habilita los errores php
 // TODO: Deshabilitar en producción
 ini_set('display_errors', '1');
@@ -37,12 +45,27 @@ try {
    // $router = $container->get(\App\Router::class);
    // $router->dispatch();
 
-   $router = $container->get('router');
+   // Crear el router
+   $router = new Router(
+      new RouteCollection(),
+      new RouteMatcher(),
+      new ControllerInvoker($container),
+      new MiddlewareHandler($container),
+      $container
+   );
 
-   $router->get('/', function ($request, $response) {
-      $response->json(['message' => 'Hello, World! ' . __METHOD__]);
+   // Cargar las rutas
+   // Definir algunas rutas
+   $router->get('/home', function (Request $request, Response $response) {
+      $response->json(['message' => 'Welcome to the home page']);
    });
 
+   $router->get('/user/{name}/{surename}/{age}?', function (Request $request, Response $response) {
+      $response->json(['message' => 'Welcome to the user page', 'params' => $request->body]);
+   });
+
+
+   // Implementación de la lógica para el router
    $router->dispatch();
 
 
@@ -51,5 +74,5 @@ try {
    // En producción, es recomendable redirigir a una página de error personalizada
    error_log($e->getMessage());
    http_response_code(500);
-   echo "Se ha producido un error en el arranque de la aplicación.";
+   echo "Se ha producido un error en el arranque de la aplicación " . $e->getMessage();
 }

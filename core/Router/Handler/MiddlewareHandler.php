@@ -14,23 +14,53 @@ namespace ESE\Core\Router\Handler;
 
 use ESE\Core\Router\Http\Request;
 use ESE\Core\Router\Http\Response;
+use Psr\Container\ContainerInterface;
+use ESE\Core\Router\Interfaces\MiddlewareInterface;
 
 class MiddlewareHandler {
-   public function handle(array $middlewares, Request $request, Response $response) {
-      foreach ($middlewares as $middleware) {
-         // evalua si el middleware es un {closure} o una clase
+
+   private ContainerInterface $container;
+
+   public function __construct(ContainerInterface $container) {
+      $this->container = $container;
+   }
+
+   public function handle(array $middlewares, Request $request, Response $response): void {
+      $this->executeMiddlewareChain($middlewares, $request, $response);
+   }
+
+   private function executeMiddlewareChain(array $middlewares, Request $request, Response $response, int $index = 0): void {
+      if (!isset($middlewares[$index])) {
+         return; // Fin de la cadena de middlewares
+      }
+
+      $middleware = $middlewares[$index];
+
+      try {
+         // Evaluar si es un callable o una clase middleware
          if (is_callable($middleware)) {
-            call_user_func($middleware, $request, $response);
-            continue;
+            $middleware($request, $response, function () use ($middlewares, $request, $response, $index) {
+               $this->executeMiddlewareChain($middlewares, $request, $response, $index + 1);
+            });
+         } else {
+            if (!class_exists($middleware)) {
+               throw new \Exception("Middleware {$middleware} not found");
+            }
+
+            // Instanciar el middleware a través del contenedor
+            $middlewareInstance = $this->container->get($middleware);
+
+            if (!$middlewareInstance instanceof MiddlewareInterface) {
+               throw new \Exception("Middleware {$middleware} must implement MiddlewareInterface");
+            }
+
+            // Ejecutar el método handle del middleware
+            $middlewareInstance->handle($request, $response, function () use ($middlewares, $request, $response, $index) {
+               $this->executeMiddlewareChain($middlewares, $request, $response, $index + 1);
+            });
          }
-
-         if (!class_exists($middleware)) {
-            throw new \Exception("Middleware {$middleware} not found");
-         }
-
-
-         // $middleware = new $middleware;
-         // $middleware->handle($request, $response);
+      } catch (\Exception $e) {
+         $response->setStatus(500)->json(['error_middleware' => $e->getMessage()]);
       }
    }
 }
