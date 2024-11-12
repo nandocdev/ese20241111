@@ -26,4 +26,5 @@ abstract class QueryBuilder {
    }
 
    abstract public function build(): string;
+   abstract public function execute(): array|bool;
 }

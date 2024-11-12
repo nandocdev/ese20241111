@@ -12,10 +12,18 @@ declare(strict_types=1);
 
 namespace ESE\Core\Orm\Builders;
 use ESE\Core\Orm\Builders\QueryBuilder;
+use ESE\Core\Orm\Managers\QueryExcecute;
+use ESE\Core\Orm\Connection\DatabaseConnection;
 
 class InsertQueryBuilder extends QueryBuilder {
    private array $columns = [];
    private array $values = [];
+   private DatabaseConnection $connection;
+
+   public function __construct(string $table) {
+      parent::__construct($table);
+      $this->connection = new DatabaseConnection();
+   }
 
    // Método insert que acepta tanto un solo par clave-valor como múltiples pares
    public function insert($keys, $values = null): self {
@@ -49,5 +57,11 @@ class InsertQueryBuilder extends QueryBuilder {
       $this->params = $this->values;
 
       return $sql;
+   }
+
+   public function execute(): bool {
+      $sql = $this->build();
+      $query = new QueryExcecute($this->connection);
+      return $query->executeTransaction($sql, $this->params);
    }
 }

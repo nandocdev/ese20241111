@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace ESE\Core\Orm\Builders;
 use ESE\Core\Orm\Builders\QueryBuilder;
+use ESE\Core\Orm\Managers\QueryExcecute;
+use ESE\Core\Orm\Connection\DatabaseConnection;
 
 class SelectQueryBuilder extends QueryBuilder {
    private array $select = ['*'];
@@ -21,6 +23,12 @@ class SelectQueryBuilder extends QueryBuilder {
    private array $groupBy = [];
    private int $limit = 0;
    private int $offset = 0;
+   private DatabaseConnection $connection;
+
+   public function __construct(string $table) {
+      parent::__construct($table);
+      $this->connection = new DatabaseConnection();
+   }
 
    public function select(array $columns = []): self {
       $this->select = empty($columns) ? ['*'] : $columns;
@@ -74,5 +82,11 @@ class SelectQueryBuilder extends QueryBuilder {
       }
 
       return $sql;
+   }
+
+   public function execute(): array|bool {
+      $sql = $this->build();
+      $query = new QueryExcecute($this->connection);
+      return $query->executeQuery($sql, $this->params);
    }
 }

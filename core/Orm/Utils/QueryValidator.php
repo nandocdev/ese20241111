@@ -53,6 +53,7 @@ class QueryValidator {
             throw new \RuntimeException("Query contains potentially dangerous keyword: {$param}");
          }
       }
+      return true;
    }
 
 }
